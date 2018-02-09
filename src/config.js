@@ -1,7 +1,6 @@
 import AWS from 'aws-sdk';
 import awsConnectionManager from './awsConnectionManager';
 
-
 const AWS_REGION = 'eu-west-1';
 
 const devCredentials = process.env.NODE_ENV === 'development'
@@ -23,7 +22,7 @@ function updateCredentials(awsCredentialsObject, cb) {
         awsCredentialsObject.secretAccessKey = configDetails.Credentials.SecretAccessKey;
         awsCredentialsObject.sessionToken = configDetails.Credentials.SessionToken;
         awsCredentialsObject.expireTime = new Date(configDetails.Credentials.Expiration);
-        
+
         /* firing cb() without passing it an error indicates to the awsCredentialsObject
            that the credentials have been successfully updated. */
         cb();
@@ -43,10 +42,10 @@ function getAwsConfig() {
                     sessionToken: auth.Credentials.SessionToken,
                     expireTime: new Date(auth.Credentials.Expiration)
                 });
-                
+
                 // override the refresh function to run our own logic.
                 credentials.refresh = refreshCredentials(credentials);
-                
+
                 return resolve(new AWS.Config({
                     region: AWS_REGION,
                     credentials: credentials,
@@ -59,12 +58,16 @@ function getAwsConfig() {
 
         if (!devCredentials.DEVELOPMENT_AWS_ACCESS_KEY || !devCredentials.DEVELOPMENT_AWS_SECRET_KEY) {
             throw Error(
-                `You must specify development AWS keys in the devCredentials.json file.
+                `You must specify development AWS keys and a region in the devCredentials.json file.
                 Define 2 keys: DEVELOPMENT_AWS_ACCESS_KEY & DEVELOPMENT_AWS_SECRET_KEY`);
         }
 
+        if (!devCredentials.DEVELOPMENT_AWS_REGION) {
+          devCredentials.DEVELOPMENT_AWS_REGION = 'eu-west-1';
+        }
+
         return resolve(new AWS.Config({
-            region: AWS_REGION,
+            region: devCredentials.DEVELOPMENT_AWS_REGION,
             credentials: {
                 accessKeyId: devCredentials.DEVELOPMENT_AWS_ACCESS_KEY,
                 secretAccessKey: devCredentials.DEVELOPMENT_AWS_SECRET_KEY

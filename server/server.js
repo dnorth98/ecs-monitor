@@ -15,10 +15,10 @@ if (env === 'development') {
 
 const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID || devCredentials.DEVELOPMENT_AWS_ACCESS_KEY;
 const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY || devCredentials.DEVELOPMENT_AWS_SECRET_KEY;
-
+const AWS_REGION = process.env.AWS_REGION || 'eu-west-1';
 
 const sts = new AWS.STS({
-    region: 'eu-west-1',
+    region: AWS_REGION,
     accessKeyId: AWS_ACCESS_KEY_ID,
     secretAccessKey: AWS_SECRET_ACCESS_KEY
 });
@@ -32,6 +32,11 @@ sub.post('/authenticate', (req, res) => {
 sub.get('/ping', (req, res) => {
     res.contentType('text/plain');
     return res.send('PONG');
+});
+
+sub.get('/region', (req, res) => {
+    res.contentType('text/plain');
+    return res.send(AWS_REGION);
 });
 
 sub.get('*', (req, res) => {

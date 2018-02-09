@@ -5,7 +5,6 @@ import { MOUNTING_PATH } from '../globalConfig';
 
 const SESSIONSTORAGE_AUTH_KEY = 'auth';
 
-
 function getTemporaryCredentials() {
     return axios.post(MOUNTING_PATH + 'authenticate');
 }
@@ -16,7 +15,7 @@ function storeLatest(result) {
     }
 
     window.sessionStorage.setItem(SESSIONSTORAGE_AUTH_KEY, JSON.stringify(result.data));
-    
+
     return result.data;
 }
 
